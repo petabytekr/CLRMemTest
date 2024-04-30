@@ -35,6 +35,13 @@ public partial class UserDefinedFunctions
     }
 
     [Microsoft.SqlServer.Server.SqlFunction(DataAccess = DataAccessKind.Read)]
+    public static SqlString TestGetTotalMemory(SqlInt32 loopCount)
+    {
+        long result = GC.GetTotalMemory(loopCount == 0 ? false : true);
+        return "OK : GetTotalMemory=" + result;
+    }
+
+    [Microsoft.SqlServer.Server.SqlFunction(DataAccess = DataAccessKind.Read)]
     public static SqlString TestLoopConnection(SqlInt32 loopCount)
     {
         int ret = 0;

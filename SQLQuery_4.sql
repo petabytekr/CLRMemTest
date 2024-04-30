@@ -1,6 +1,7 @@
 -- 함수 삭제
 DROP FUNCTION IF EXISTS [dbo].TestEmpty;
 DROP FUNCTION IF EXISTS [dbo].TestCallGC;
+DROP FUNCTION IF EXISTS [dbo].TestGetTotalMemory;
 DROP FUNCTION IF EXISTS [dbo].TestLoopConnection;
 DROP FUNCTION IF EXISTS [dbo].TestLoopConnection_CommandNoUsing;
 DROP FUNCTION IF EXISTS [dbo].TestLoopConnection_CommandMultiNoUsing;
