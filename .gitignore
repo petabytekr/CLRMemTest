@@ -956,3 +956,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,java,gradle,eclipse,intellij+all,visualstudio,visualstudiocode,microsoftoffice,macos,windows,linux,python,go,kotlin,rust
 .DS_Store
+.DS_Store
