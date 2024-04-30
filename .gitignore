@@ -37,7 +37,7 @@
 
 ### Eclipse ###
 .metadata
-bin/
+#bin/
 tmp/
 *.tmp
 *.bak
@@ -955,3 +955,4 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,java,gradle,eclipse,intellij+all,visualstudio,visualstudiocode,microsoftoffice,macos,windows,linux,python,go,kotlin,rust
+.DS_Store
