@@ -14,14 +14,16 @@ BEGIN
 
     SET @StartTime = SYSDATETIME();
 
-    INSERT INTO dbo.log_appdomains SELECT getdate() as checktime, 'START' as logmsg, * FROM sys.dm_clr_appdomains;
+    INSERT INTO dbo.log_os_process_mem SELECT @StartTime as checktime, 'START' as logmsg, * FROM sys.dm_os_process_memory;
 
-    INSERT INTO dbo.ProcLog(LogMsg) VALUES ('Starting, Loop=' + CAST(@LoopCount as nvarchar(10)));
+    INSERT INTO dbo.log_appdomains SELECT @StartTime as checktime, 'START' as logmsg, * FROM sys.dm_clr_appdomains;
 
-    INSERT dbo.log_memory_clerks SELECT GETDATE() as checktime, *, 'START' as logmsg FROM sys.dm_os_memory_clerks
+    INSERT INTO dbo.ProcLog(CheckTime, LogMsg) VALUES (@StartTime, 'Starting, Loop=' + CAST(@LoopCount as nvarchar(10)));
+
+    INSERT dbo.log_memory_clerks SELECT @StartTime as checktime, *, 'START' as logmsg FROM sys.dm_os_memory_clerks
     -- WHERE type IN ('MEMORYCLERK_SQLBUFFERPOOL','MEMORYCLERK_SQLCLR');
 
-    INSERT INTO log_perf_counters SELECT getdate() as checktime, 'START' as logmsg, counter_name, instance_name, mb = cntr_value/1024.0
+    INSERT INTO log_perf_counters SELECT @StartTime as checktime, 'START' as logmsg, counter_name, instance_name, mb = cntr_value/1024.0
     FROM sys.dm_os_performance_counters 
     -- WHERE (counter_name = N'Cursor memory usage' and instance_name <> N'_Total')
     -- OR (instance_name = N'' AND counter_name IN 
@@ -37,21 +39,23 @@ BEGIN
     END TRY
     BEGIN CATCH
         -- 에러 발생시 로깅
-        INSERT INTO dbo.ProcLog(LogMsg) VALUES ('ERROR, Loop=' + CAST(@LoopCount as nvarchar(10)) + ', ' + ERROR_MESSAGE());
+        INSERT INTO dbo.ProcLog(CheckTime, LogMsg) VALUES (@StartTime, 'ERROR, Loop=' + CAST(@LoopCount as nvarchar(10)) + ', ' + ERROR_MESSAGE());
     END CATCH;
 
     -- 프로시저 종료 시간과 소요 시간 기록
     SET @EndTime = SYSDATETIME();  
     SET @ElapsedMilliseconds = DATEDIFF(MILLISECOND, @StartTime, @EndTime);
 
-    INSERT INTO dbo.ProcLog(LogMsg) VALUES ('End, Loop=' + CAST(@LoopCount as nvarchar(10)) + ', Elapsed=' + CAST(@ElapsedMilliseconds AS nvarchar(10)) + ' ms');
+    INSERT INTO dbo.ProcLog(CheckTime, LogMsg) VALUES (@EndTime, 'End, Loop=' + CAST(@LoopCount as nvarchar(10)) + ', Elapsed=' + CAST(@ElapsedMilliseconds AS nvarchar(10)) + ' ms');
 
-    INSERT INTO dbo.log_appdomains SELECT getdate() as checktime, 'START' as logmsg, * FROM sys.dm_clr_appdomains;
+    INSERT INTO dbo.log_os_process_mem SELECT @EndTime as checktime, 'END' as logmsg, * FROM sys.dm_os_process_memory;
 
-    INSERT dbo.log_memory_clerks SELECT GETDATE() as checktime, *, 'END' as logmsg FROM sys.dm_os_memory_clerks
+    INSERT INTO dbo.log_appdomains SELECT @EndTime as checktime, 'START' as logmsg, * FROM sys.dm_clr_appdomains;
+
+    INSERT dbo.log_memory_clerks SELECT @EndTime as checktime, *, 'END' as logmsg FROM sys.dm_os_memory_clerks
     -- WHERE type IN ('MEMORYCLERK_SQLBUFFERPOOL','MEMORYCLERK_SQLCLR');
 
-    INSERT INTO log_perf_counters SELECT getdate() as checktime, 'END' as logmsg, counter_name, instance_name, mb = cntr_value/1024.0
+    INSERT INTO log_perf_counters SELECT @EndTime as checktime, 'END' as logmsg, counter_name, instance_name, mb = cntr_value/1024.0
     FROM sys.dm_os_performance_counters 
     -- WHERE (counter_name = N'Cursor memory usage' and instance_name <> N'_Total')
     -- OR (instance_name = N'' AND counter_name IN 
