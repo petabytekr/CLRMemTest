@@ -1,0 +1,21 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[log_os_process_mem](
+	[checktime] [datetime] NOT NULL,
+	[logmsg] [nvarchar](100) NULL,
+	[physical_memory_in_use_kb] [bigint] NOT NULL,
+	[large_page_allocations_kb] [bigint] NOT NULL,
+	[locked_page_allocations_kb] [bigint] NOT NULL,
+	[total_virtual_address_space_kb] [bigint] NOT NULL,
+	[virtual_address_space_reserved_kb] [bigint] NOT NULL,
+	[virtual_address_space_committed_kb] [bigint] NOT NULL,
+	[virtual_address_space_available_kb] [bigint] NOT NULL,
+	[page_fault_count] [bigint] NOT NULL,
+	[memory_utilization_percentage] [int] NOT NULL,
+	[available_commit_limit_kb] [bigint] NOT NULL,
+	[process_physical_memory_low] [bit] NOT NULL,
+	[process_virtual_memory_low] [bit] NOT NULL
+) ON [PRIMARY]
+GO
